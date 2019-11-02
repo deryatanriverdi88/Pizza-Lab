@@ -6,8 +6,9 @@ class App extends Component {
 
   state = {
     allPizzas:  [],
-    editPizza: {}
-
+    topping: '',
+    size: 'Small',
+    vegetarian: ''
   }
 
   componentDidMount(){
@@ -20,19 +21,56 @@ class App extends Component {
     })
   }
 
-  handleEditPizza =(event, pizzaObject)=>{
-    // console.log("Pizza Object", pizzaObject)
+  handleEditPizza =(event)=>{
+    // console.log(event.target.value, event.target.name)
     this.setState({
-      editPizza: pizzaObject
+     [event.target.name]: event.target.value
     })
+  }
+
+
+  handleSubmit = (e) =>{
+    // console.log("submit")
+    e.preventDefault()
+    fetch("http://localhost:3000/pizzas",  {
+      method: "POST",
+      headers: {
+        'Content-Type':'application/json',
+        'Accept':'application/json'
+      },
+      body: JSON.stringify({
+        topping: this.state.topping,
+        size: this.state.size,
+        vegetarian: JSON.parse(this.state.vegetarian)
+      })
+    })
+    .then (res => res.json())
+    .then(pizzaObject => {
+      this.setState({
+        allPizzas: [pizzaObject, ...this.state.allPizzas]
+      })
+    })
+    .then(
+      this.setState({
+        topping: '',
+        size: '',
+        vegearian: ''
+      })
+    )
   }
 
   render() {
     return (
       <Fragment>
         <Header/>
-        <PizzaForm newPizzaInfo =  {this.state.editPizza}/>
-        <PizzaList pizzas={this.state.allPizzas}  editPizza ={this.handleEditPizza}/>
+        <PizzaForm newPizzaInfo = {this.state.editPizza} 
+                   handleEditPizza={this.handleEditPizza}
+                   handleSubmit={this.handleSubmit}
+                   topping={this.state.topping}
+                   size={this.state.size}
+                   vegetarian={this.state.vegetarian}/>
+        <PizzaList pizzas={this.state.allPizzas}  
+                   editPizza ={this.handleEditPizza}/>
       </Fragment>
     );
   }
