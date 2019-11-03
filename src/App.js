@@ -6,6 +6,7 @@ class App extends Component {
 
   state = {
     allPizzas:  [],
+    pizzaObject: {}, 
     topping: '',
     size: 'Small',
     vegetarian: ''
@@ -21,8 +22,8 @@ class App extends Component {
     })
   }
 
-  handleEditPizza =(event)=>{
-    // console.log(event.target.value, event.target.name)
+  handleCreatePizza =(event)=>{
+    console.log(event.target.name, this.state.size)
     this.setState({
      [event.target.name]: event.target.value
     })
@@ -53,24 +54,40 @@ class App extends Component {
     .then(
       this.setState({
         topping: '',
-        size: '',
-        vegearian: ''
+        size: 'Small',
+        vegetarian: null
       })
     )
   }
 
+
+  handleEditPizza =(e, pizza)=>{
+    // console.log('edit pizza', pizza)
+    this.setState({
+      pizzaObject: pizza
+    })
+  }
+
+  handleEditSubmit = () => {
+    console.log('edit submit')
+  }
+
+
   render() {
+    // console.log(this.state.pizzaObject)
     return (
       <Fragment>
         <Header/>
-        <PizzaForm newPizzaInfo = {this.state.editPizza} 
+        <PizzaForm pizzaObject={this.state.pizzaObject}
+                   handleEditSubmit={this.handleEditSubmit}
                    handleEditPizza={this.handleEditPizza}
+                   handleCreatePizza={this.handleCreatePizza}
                    handleSubmit={this.handleSubmit}
                    topping={this.state.topping}
                    size={this.state.size}
                    vegetarian={this.state.vegetarian}/>
         <PizzaList pizzas={this.state.allPizzas}  
-                   editPizza ={this.handleEditPizza}/>
+                   handleEditPizza={this.handleEditPizza}/>
       </Fragment>
     );
   }
